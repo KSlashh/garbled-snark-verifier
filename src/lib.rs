@@ -1,3 +1,4 @@
+pub mod bitvm3;
 pub mod circuits;
 pub mod core;
 

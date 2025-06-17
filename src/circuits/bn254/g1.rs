@@ -627,7 +627,10 @@ mod tests {
         let a = G1Projective::random();
         let b = G1Projective::random();
         let c = ark_bn254::G1Projective::ZERO;
-        let circuit = G1Projective::add_montgomery(G1Projective::wires_set_montgomery(a), G1Projective::wires_set_montgomery(b));
+        let circuit = G1Projective::add_montgomery(
+            G1Projective::wires_set_montgomery(a),
+            G1Projective::wires_set_montgomery(b),
+        );
         circuit.gate_counts().print();
         for mut gate in circuit.1 {
             gate.evaluate();
@@ -635,21 +638,30 @@ mod tests {
         let d = G1Projective::from_wires_unchecked(circuit.0);
         assert_eq!(d, G1Projective::as_montgomery(a + b));
 
-        let circuit = G1Projective::add(G1Projective::wires_set_montgomery(a), G1Projective::wires_set_montgomery(c));
+        let circuit = G1Projective::add(
+            G1Projective::wires_set_montgomery(a),
+            G1Projective::wires_set_montgomery(c),
+        );
         for mut gate in circuit.1 {
             gate.evaluate();
         }
         let d = G1Projective::from_wires_unchecked(circuit.0);
         assert_eq!(d, G1Projective::as_montgomery(a));
 
-        let circuit = G1Projective::add(G1Projective::wires_set_montgomery(c), G1Projective::wires_set_montgomery(b));
+        let circuit = G1Projective::add(
+            G1Projective::wires_set_montgomery(c),
+            G1Projective::wires_set_montgomery(b),
+        );
         for mut gate in circuit.1 {
             gate.evaluate();
         }
         let d = G1Projective::from_wires_unchecked(circuit.0);
         assert_eq!(d, G1Projective::as_montgomery(b));
 
-        let circuit = G1Projective::add(G1Projective::wires_set_montgomery(c), G1Projective::wires_set_montgomery(c));
+        let circuit = G1Projective::add(
+            G1Projective::wires_set_montgomery(c),
+            G1Projective::wires_set_montgomery(c),
+        );
         for mut gate in circuit.1 {
             gate.evaluate();
         }
@@ -672,8 +684,10 @@ mod tests {
     fn test_g1p_add_evaluate_montgomery() {
         let a = G1Projective::random();
         let b = G1Projective::random();
-        let (c_wires, gate_count) =
-            G1Projective::add_evaluate_montgomery(G1Projective::wires_set_montgomery(a), G1Projective::wires_set_montgomery(b));
+        let (c_wires, gate_count) = G1Projective::add_evaluate_montgomery(
+            G1Projective::wires_set_montgomery(a),
+            G1Projective::wires_set_montgomery(b),
+        );
         gate_count.print();
         let c = G1Projective::from_wires_unchecked(c_wires);
         assert_eq!(c, G1Projective::as_montgomery(a + b));
@@ -811,7 +825,10 @@ mod tests {
         let base = G1Projective::random();
         let s = Fr::random();
         let (result_wires, gate_count) =
-            G1Projective::scalar_mul_by_constant_base_evaluate_montgomery::<10>(Fr::wires_set(s), base);
+            G1Projective::scalar_mul_by_constant_base_evaluate_montgomery::<10>(
+                Fr::wires_set(s),
+                base,
+            );
         gate_count.print();
         let result = G1Projective::from_wires_unchecked(result_wires);
         assert_eq!(result, G1Projective::as_montgomery(base * s));
@@ -838,10 +855,11 @@ mod tests {
         let n = 1;
         let bases = (0..n).map(|_| G1Projective::random()).collect::<Vec<_>>();
         let scalars = (0..n).map(|_| Fr::random()).collect::<Vec<_>>();
-        let (result_wires, gate_count) = G1Projective::msm_with_constant_bases_evaluate_montgomery::<10>(
-            scalars.iter().map(|s| Fr::wires_set(*s)).collect(),
-            bases.clone(),
-        );
+        let (result_wires, gate_count) =
+            G1Projective::msm_with_constant_bases_evaluate_montgomery::<10>(
+                scalars.iter().map(|s| Fr::wires_set(*s)).collect(),
+                bases.clone(),
+            );
         gate_count.print();
         let result = G1Projective::from_wires_unchecked(result_wires);
         let bases_affine = bases.iter().map(|g| g.into_affine()).collect::<Vec<_>>();
