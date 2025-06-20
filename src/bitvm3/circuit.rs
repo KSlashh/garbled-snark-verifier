@@ -222,13 +222,13 @@ pub fn garble(
         e3,
         e4,
     } = params;
+    let c00 = mod_bipow_mul(&a0, &e, &b0, &e1, &n);
+    let c01 = mod_bipow_mul(&a0, &e, &b1, &e2, &n);
+    let c10 = mod_bipow_mul(&a1, &e, &b0, &e3, &n);
+    let c11 = mod_bipow_mul(&a1, &e, &b1, &e4, &n);
     match gate_type {
         GateType::And => {
             // T0 = c00 / c01 , T1 = c00 / c10
-            let c00 = mod_bipow_mul(&a0, &e, &b0, &e1, &n);
-            let c01 = mod_bipow_mul(&a0, &e, &b1, &e2, &n);
-            let c10 = mod_bipow_mul(&a1, &e, &b0, &e3, &n);
-            let c11 = mod_bipow_mul(&a1, &e, &b1, &e4, &n);
             (
                 (
                     mod_mul(&c00, &mod_inv(&c01, &n).unwrap(), &n).to_bytes_le(),
@@ -239,10 +239,6 @@ pub fn garble(
         }
         GateType::Or => {
             // T0 = c01 / c10 , T1 = c01 / c11
-            let c00 = mod_bipow_mul(&a0, &e, &b0, &e1, &n);
-            let c01 = mod_bipow_mul(&a0, &e, &b1, &e2, &n);
-            let c10 = mod_bipow_mul(&a1, &e, &b0, &e3, &n);
-            let c11 = mod_bipow_mul(&a1, &e, &b1, &e4, &n);
             (
                 (
                     mod_mul(&c01, &mod_inv(&c10, &n).unwrap(), &n).to_bytes_le(),
@@ -253,10 +249,6 @@ pub fn garble(
         }
         GateType::Xor => {
             // T0 = c01 / c10 , T1 = c00 / c11
-            let c00 = mod_bipow_mul(&a0, &e, &b0, &e1, &n);
-            let c01 = mod_bipow_mul(&a0, &e, &b1, &e2, &n);
-            let c10 = mod_bipow_mul(&a1, &e, &b0, &e3, &n);
-            let c11 = mod_bipow_mul(&a1, &e, &b1, &e4, &n);
             (
                 (
                     mod_mul(&c01, &mod_inv(&c10, &n).unwrap(), &n).to_bytes_le(),
@@ -267,10 +259,6 @@ pub fn garble(
         }
         GateType::Nand => {
             // T0 = c00 / c01 , T1 = c00 / c10
-            let c00 = mod_bipow_mul(&a0, &e, &b0, &e1, &n);
-            let c01 = mod_bipow_mul(&a0, &e, &b1, &e2, &n);
-            let c10 = mod_bipow_mul(&a1, &e, &b0, &e3, &n);
-            let c11 = mod_bipow_mul(&a1, &e, &b1, &e4, &n);
             (
                 (
                     mod_mul(&c00, &mod_inv(&c01, &n).unwrap(), &n).to_bytes_le(),
@@ -281,10 +269,6 @@ pub fn garble(
         }
         GateType::Nor => {
             // T0 = c01 / c10 , T1 = c01 / c11
-            let c00 = mod_bipow_mul(&a0, &e, &b0, &e1, &n);
-            let c01 = mod_bipow_mul(&a0, &e, &b1, &e2, &n);
-            let c10 = mod_bipow_mul(&a1, &e, &b0, &e3, &n);
-            let c11 = mod_bipow_mul(&a1, &e, &b1, &e4, &n);
             (
                 (
                     mod_mul(&c01, &mod_inv(&c10, &n).unwrap(), &n).to_bytes_le(),
@@ -295,10 +279,6 @@ pub fn garble(
         }
         GateType::Xnot => {
             // T0 = c01 / c10 , T1 = c00 / c11
-            let c00 = mod_bipow_mul(&a0, &e, &b0, &e1, &n);
-            let c01 = mod_bipow_mul(&a0, &e, &b1, &e2, &n);
-            let c10 = mod_bipow_mul(&a1, &e, &b0, &e3, &n);
-            let c11 = mod_bipow_mul(&a1, &e, &b1, &e4, &n);
             (
                 (
                     mod_mul(&c01, &mod_inv(&c10, &n).unwrap(), &n).to_bytes_le(),
@@ -309,10 +289,6 @@ pub fn garble(
         }
         GateType::Nimp => {
             // T0 = c00 / c01 , T1 = c00 / c11
-            let c00 = mod_bipow_mul(&a0, &e, &b0, &e1, &n);
-            let c01 = mod_bipow_mul(&a0, &e, &b1, &e2, &n);
-            let c10 = mod_bipow_mul(&a1, &e, &b0, &e3, &n);
-            let c11 = mod_bipow_mul(&a1, &e, &b1, &e4, &n);
             (
                 (
                     mod_mul(&c00, &mod_inv(&c01, &n).unwrap(), &n).to_bytes_le(),
@@ -323,10 +299,6 @@ pub fn garble(
         }
         GateType::Nsor => {
             // T0 = c00 / c10 , T1 = c00 / c11
-            let c00 = mod_bipow_mul(&a0, &e, &b0, &e1, &n);
-            let c01 = mod_bipow_mul(&a0, &e, &b1, &e2, &n);
-            let c10 = mod_bipow_mul(&a1, &e, &b0, &e3, &n);
-            let c11 = mod_bipow_mul(&a1, &e, &b1, &e4, &n);
             (
                 (
                     mod_mul(&c00, &mod_inv(&c10, &n).unwrap(), &n).to_bytes_le(),
@@ -463,13 +435,18 @@ mod test {
         let input_1 = random_label_pair();
         let input_2 = random_label_pair();
         let input_3 = random_label_pair();
-        let mut labels = vec![input_0.clone(), input_1.clone(), input_2.clone(), input_3.clone()];
+        let mut labels = vec![
+            input_0.clone(),
+            input_1.clone(),
+            input_2.clone(),
+            input_3.clone(),
+        ];
 
         // garbler compute adaptors & labels
         println!("2. garbler compute adaptors & labels");
         let mut adaptors: Vec<(Adaptor, Adaptor)> = vec![];
         for _ in 0..io.inputs_index.len() {
-            adaptors.push((vec![],vec![]));
+            adaptors.push((vec![], vec![]));
         }
         for i in io.inputs_index.len()..circuit.gates.len() {
             let gate = &circuit.gates[i];
@@ -484,7 +461,11 @@ mod test {
 
         // evaluate circuit: 0x10 + 0x11 = 0x101 (2+3=5)
         let public_input_labels = vec![input_0.1, input_1.0, input_2.1, input_3.1];
-        let expected_output_labels = vec![labels[4].1.clone(), labels[8].0.clone(), labels[10].1.clone()];
+        let expected_output_labels = vec![
+            labels[4].1.clone(),
+            labels[8].0.clone(),
+            labels[10].1.clone(),
+        ];
 
         // verifier compute labels
         println!("3. verifier compute labels");
@@ -497,8 +478,8 @@ mod test {
             );
             let gate_label = evaluate_gate(&gate.gate_type, &params, input_labels, &adaptors[i]);
             verifier_labels.push(gate_label);
-        } 
-        
+        }
+
         println!("4. compare output labels");
         let mut verifier_ouput_labels = vec![];
         for i in io.outputs_index {
