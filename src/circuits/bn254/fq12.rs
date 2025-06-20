@@ -650,6 +650,16 @@ mod tests {
     }
 
     #[test]
+    fn test_fq12_x() {
+        let u = Fq12::random();
+        println!("u: {:?}", u);
+        let b = Fq12::wires_set_montgomery(u);
+        let v = Fq12::from_montgomery_wires(b);
+        println!("v: {:?}", v);
+        assert_eq!(u, v);
+    }
+
+    #[test]
     fn test_fq12_equal_constant() {
         let a = Fq12::random();
         let b = Fq12::random();
