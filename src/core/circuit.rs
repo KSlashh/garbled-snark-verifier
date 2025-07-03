@@ -1,4 +1,4 @@
-use crate::{bag::*, core::gate::GateCount};
+use crate::{core_bag::*, core::gate::GateCount};
 
 pub struct Circuit(pub Wires, pub Vec<Gate>);
 
